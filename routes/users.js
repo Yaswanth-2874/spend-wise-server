@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { client, connect } = require("../connection");
 connect();
+const { format } = require("date-fns");
 
 router.get("/", async (req, res) => {
   try {
@@ -32,7 +33,7 @@ router
       const data = client.db("ToDoList").collection("SpendWise");
       const newData = {
         email: req.params.email,
-        income: 10000,
+        balance: 10000,
         spendings: {},
       };
       await data.insertOne(newData);
@@ -45,12 +46,16 @@ router
   .put(async (req, res) => {
     try {
       const data = client.db("ToDoList").collection("SpendWise");
-      const { category, description, cost, date } = req.body;
+      const time = format(new Date(), "HH:mm:ss");
+      const { category, description, cost, balance } = req.body;
+      let { date } = req.body;
+      date = !date ? format(new Date(), "dd-MM-yyyy") : date;
       await data.updateOne(
         { email: req.params.email },
         {
+          $set: { balance: balance },
           $addToSet: {
-            [`spendings.${category}`]: { description, cost, date },
+            [`spendings.${category}`]: { description, cost, time, date },
           },
         },
         { upsert: true }
