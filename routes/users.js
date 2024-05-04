@@ -53,14 +53,20 @@ router.post("/register", async (req, res) => {
       email: email,
       password: hashedPassword,
       status: "good",
-      balance: 10000,
+      balance: 0,
       spendings: {},
     };
+    let query = data.findOne({ email: email });
+    if (Object.keys(query).length !== 0) {
+      res.json({ status: "bad", message: "Data already found", query });
+      return;
+    }
     await data.insertOne(newData);
-    res.json({ status: "good" });
+    query = data.findOne({ email: email });
+    res.json({ query });
   } catch (e) {
     console.log("Not able to register due to ", e);
-    res.json({ status: "bad" });
+    res.json({ status: "bad", message: "Something went wrong in the server" });
   }
 });
 router
@@ -68,7 +74,7 @@ router
   .put(async (req, res) => {
     try {
       const data = client.db("ToDoList").collection("SpendWise");
-      const { category, description, cost, balance } = req.body;
+      const { category, description, cost, balance, isExpenditure } = req.body;
       let { date } = req.body;
       date = !date ? format(new Date(), "dd-MM-yyyy") : date;
       await data.updateOne(
@@ -81,6 +87,7 @@ router
               description,
               cost,
               date,
+              isExpenditure,
             },
           },
         },
@@ -105,10 +112,18 @@ router
 
 router.delete("/items/:id", async (req, res) => {
   const { id } = req.params;
+  const { category } = req.body;
   try {
     const data = client.db("ToDoList").collection("SpendWise");
-    await data.deleteOne({ _id: new ObjectId(id) });
-    res.json({ status: "good" });
+    const result = await data.updateOne(
+      { [`spendings.${category}._id`]: new ObjectId(id) },
+      { $pull: { [`spendings.${category}`]: { _id: new ObjectId(id) } } }
+    );
+    if (result.modifiedCount === 1) {
+      res.json({ status: "good", message: "Deleted data" });
+    } else {
+      res.json({ status: "bad", message: "Data with specified ID not found" });
+    }
   } catch (e) {
     console.log("Not able to delete data with specific id due to ", e);
     res.json({ status: "bad" });
