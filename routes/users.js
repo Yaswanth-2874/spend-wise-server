@@ -36,7 +36,6 @@ router.route("/login").post(async (req, res) => {
       res.json({ status: "bad", reason: "Username or password wrong" });
       return;
     }
-    loggedIn = true;
     res.json(query);
   } catch (e) {
     console.log("Failed to login in due to ", e);
@@ -55,6 +54,7 @@ router.post("/register", async (req, res) => {
       status: "good",
       balance: 0,
       spendings: {},
+      data: [],
     };
     let query = data.findOne({ email: email });
     if (Object.keys(query).length !== 0) {
@@ -77,10 +77,23 @@ router
       const { category, description, cost, balance, isExpenditure } = req.body;
       let { date } = req.body;
       date = !date ? format(new Date(), "dd-MM-yyyy") : date;
+      const existingData = await data.findOne({ email: req.params.email });
+      let graphData = existingData ? existingData.data : [];
+      const existingCategoryIndex = graphData.findIndex(
+        (item) => item.label === category
+      );
+      if (existingCategoryIndex !== -1) {
+        graphData[existingCategoryIndex].value += cost;
+      } else {
+        graphData.push({
+          label: category,
+          value: cost,
+        });
+      }
       await data.updateOne(
         { email: req.params.email },
         {
-          $set: { balance: balance },
+          $set: { balance: balance, data: graphData },
           $addToSet: {
             [`spendings.${category}`]: {
               _id: new ObjectId(),
