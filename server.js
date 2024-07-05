@@ -1,9 +1,17 @@
-const express = require("express");
+import express from "express";
+import establishMongoConnection from "./db/establishMongoConnection.js";
+import dotenv from "dotenv";
+import authRoute from "./routes/auth.routes.js";
+
+dotenv.config();
 const app = express();
-const cors = require("cors");
-app.use(cors());
-const port = 4000;
-const userRoute = require("./routes/users");
+
 app.use(express.json());
-app.use("/users", userRoute);
-app.listen(port, () => console.log("Listening on port 4000"));
+const port = process.env.PORT || 5000;
+app.use("/api/auth", authRoute);
+
+
+app.listen(port, () => {
+  establishMongoConnection();
+  console.log(`Listening on port ${port}`);
+});
