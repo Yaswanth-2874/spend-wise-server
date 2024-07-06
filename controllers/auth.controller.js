@@ -16,9 +16,7 @@ const signup = async (req, res) => {
       return res.status(404).json({ error: "Password too short" });
     }
     if (password !== confirmPassword)
-      return res
-        .status(404)
-        .json({ error: "Passwords dont match" });
+      return res.status(404).json({ error: "Passwords dont match" });
 
     const boyProfilePic = `https://avatar.iran.liara.run/public/boy?username=${username}`;
     const girlProfilePic = `https://avatar.iran.liara.run/public/boy?username=${username}`;
@@ -35,8 +33,36 @@ const signup = async (req, res) => {
     res.status(201).json(newUser);
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
-    console.log("Error in SignupController due to ", error);
+    console.log("Error in Signup Controller due to ", error);
   }
 };
 
-export { signup };
+const login = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username: username });
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      user?.password || ""
+    );
+    if (!user || !isPasswordValid)
+      return res.status(401).json({ error: "Username or Password wrong" });
+    await generateToken(user._id, res);
+    return res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+    console.log("Error in Login Controller due to ", error);
+  }
+};
+
+const logout = async (req, res) => {
+  try {
+    res.cookie("jwtToken", "", { maxAge: 0 });
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.log("Error in logout controller due to ", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export { signup, login, logout };
