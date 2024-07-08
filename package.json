@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "server": "nodemon server"
+    "server": "nodemon src/server",
+    "start": "npm install && node src/server"
   },
   "type": "module",
   "keywords": [],
