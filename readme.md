@@ -1,14 +1,14 @@
-### SpendWise - Personal Finance Management App
+# SpendWise - Personal Finance Management App
 
 SpendWise is a personal finance management application that helps you track your income and expenses, categorize your transactions, and gain insights into your spending habits.
 
 ## Features
 
-Track income and expenses
-Categorize transactions
-Gain insights into spending habits
+- Track income and expenses
+- Categorize transactions
+- Gain insights into spending habits
 
-### Authentication Routes
+## Authentication Routes
 
 - **POST /api/auth/signup**
 
@@ -22,7 +22,7 @@ Gain insights into spending habits
 
   Log out a user and destroy the session.
 
-### Transaction Routes
+## Transaction Routes
 
 - **POST /api/transactions/add**
 
@@ -42,7 +42,8 @@ Gain insights into spending habits
 
   Middleware to verify if the user is authenticated before allowing access to certain routes.
 
-More Routes will be added 
+## More Routes to Come
+The project is under continuous development, and more routes are planned for future features to enhance functionality and user experience.
 
 ## Author
 
