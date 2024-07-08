@@ -33,7 +33,7 @@ const addTransaction = async (req, res) => {
     }
 
     category.transactions.push(transactionId);
-    
+
     await Promise.all([
       category.save(),
       newTransaction.save(),
@@ -47,4 +47,36 @@ const addTransaction = async (req, res) => {
   }
 };
 
-export { addTransaction };
+const viewTransactions = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const userData = await List.findOne({ userId }).populate({
+      path: "categories",
+      populate: {
+        path: "transactions",
+      },
+    });
+    if (!userData) return res.json({ error: "No user data exists" });
+    res.json(userData);
+  } catch (error) {
+    console.log(`Error in viewTransactions controller due to ${error}`);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const deleteTransaction = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const deletedTransaction = await Transaction.deleteOne({ _id: id });
+    if (!deletedTransaction.deletedCount) {
+      return res.status(404).json({ error: "Transaction not found" });
+    }
+
+    res.status(200).json({ message: "Deleted Transaction" });
+  } catch (error) {
+    console.log(`Error in deleteTransaction controller due to ${error}`);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export { addTransaction, viewTransactions, deleteTransaction };

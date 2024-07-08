@@ -5,7 +5,7 @@ const transactionSchema = new mongoose.Schema({
     type: String,
   },
   cost: {
-    type: mongoose.Decimal128,
+    type: String,
     required: true,
   },
   date: {
