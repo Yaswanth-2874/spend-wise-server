@@ -1,9 +1,9 @@
 import express from "express";
 import establishMongoConnection from "./db/establishMongoConnection.js";
 import dotenv from "dotenv";
-import authRoute from "../routes/auth.routes.js";
+import authRoute from "./routes/auth.routes.js";
 import cookieParser from "cookie-parser";
-import transactionRoute from "../routes/transaction.routes.js";
+import transactionRoute from "./routes/transaction.routes.js";
 
 dotenv.config();
 const app = express();

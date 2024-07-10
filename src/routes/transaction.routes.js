@@ -10,5 +10,5 @@ const transactionRoute = express.Router();
 
 transactionRoute.post("/add", verifyUser, addTransaction);
 transactionRoute.get("/view", verifyUser, viewTransactions);
-transactionRoute.delete("/delete/:id", verifyUser, deleteTransaction)
+transactionRoute.delete("/delete/:id", verifyUser, deleteTransaction);
 export default transactionRoute;

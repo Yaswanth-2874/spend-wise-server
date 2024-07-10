@@ -43,7 +43,8 @@ SpendWise is a personal finance management application that helps you track your
   Middleware to verify if the user is authenticated before allowing access to certain routes.
 
 ## More Routes to Come
-The project is under continuous development, and more routes are planned for future features to enhance functionality and user experience.
+
+- The project is under continuous development, and more routes are planned for future features to enhance functionality and user experience.
 
 ## Author
 
