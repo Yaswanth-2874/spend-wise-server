@@ -4,12 +4,19 @@ import dotenv from "dotenv";
 import authRoute from "./routes/auth.routes.js";
 import cookieParser from "cookie-parser";
 import transactionRoute from "./routes/transaction.routes.js";
+import cors from "cors";
 
 dotenv.config();
 const app = express();
 
 app.use(cookieParser());
 app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 const port = process.env.PORT || 5000;
 
 app.use("/api/auth", authRoute);
